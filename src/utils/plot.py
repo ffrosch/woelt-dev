@@ -55,6 +55,23 @@ def feature_importances(X, y, figsize=(10, 10)):
     sns.reset_orig()
 
 
+def histplots(gdf, transformer=None):
+    fig = plt.figure(figsize=(15,10))
+    ax = plt.gca()
+
+    data = gdf.drop(columns=['geometry', 'cellcode']).copy()
+    if transformer is not None:
+        data[data.columns] = transformer.fit_transform(data)
+    data.hist(bins=25, color='steelblue', edgecolor='black', linewidth=1.0,
+              xlabelsize=8, ylabelsize=8, grid=False, ax=ax)
+    plt.tight_layout(rect=(0,0,1,1))
+
+    if transformer is not None:
+        print('---Skew---')
+        for feature in gdf.columns[2:]:
+            print(f'Before:', round(gdf[feature].skew(), 2), 'After:', round(data[feature].skew(), 2))
+
+
 def multiplot_raster(folder=None, files=None, arrays=None):
     in_memory = False
 
